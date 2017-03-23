@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "deploy": "now && echo don't forget to now alias ... create-bootcamp-people-server",
+    "deploy": "now && echo dont forget to now alias ... create-bootcamp-people-server",
     "start": "node ."
   },
   "repository": {
@@ -26,6 +26,7 @@
     "now": "^4.10.2"
   },
   "dependencies": {
+    "cors": "^2.8.1",
     "express": "^4.15.2"
   }
 }

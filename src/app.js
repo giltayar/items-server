@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -6,6 +7,8 @@ const os = require('os');
 const app = express();
 
 const DB = path.join(os.tmpdir(), 'db.json');
+
+app.use(cors({allowedOrigins: ['*']}));
 
 app.get('/people', (req, res) => {
   fs.readFile(DB, (err, content) => {
