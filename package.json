@@ -1,0 +1,30 @@
+{
+  "name": "people-server",
+  "version": "1.0.0",
+  "description": "The People server used by the React app used in the tutorials",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "deploy": "now"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreateBootcamp/people-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CreateBootcamp/people-server/issues"
+  },
+  "homepage": "https://github.com/CreateBootcamp/people-server#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "node-fetch": "^1.6.3",
+    "now": "^4.10.2"
+  },
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
