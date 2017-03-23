@@ -3,6 +3,7 @@ const {expect} = require('chai')
 const app = require('../src/app');
 const fetch = require('node-fetch');
 const fs  = require('fs');
+const os = require('os');
 
 describe('app', function() {
   let server;
@@ -51,6 +52,6 @@ describe('app', function() {
 })
 
 function removeDatabase(done) {
-    fs.unlink(__dirname + '/../src/db.json',
+    fs.unlink(os.tmpdir() + '/db.json',
       (err) => !err || err.code === 'ENOENT' ? done() : done(err));
 }

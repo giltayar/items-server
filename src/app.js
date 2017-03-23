@@ -1,10 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const app = express();
 
-const DB = path.join(__dirname, 'db.json');
+const DB = path.join(os.tmpdir(), 'db.json');
 
 app.get('/people', (req, res) => {
   fs.readFile(DB, (err, content) => {

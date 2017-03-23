@@ -2,10 +2,11 @@
   "name": "people-server",
   "version": "1.0.0",
   "description": "The People server used by the React app used in the tutorials",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "deploy": "now"
+    "deploy": "now && echo don't forget to now alias ... create-bootcamp-people-server",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
