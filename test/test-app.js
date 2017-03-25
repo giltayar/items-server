@@ -8,17 +8,17 @@ const os = require('os');
 describe('app', function() {
   let server;
 
-  before((done) => {
+  beforeEach((done) => {
     server = app.listen(3000, done);
   });
 
-  before(removeDatabase);
+  beforeEach(removeDatabase);
 
-  after((done) => {
+  afterEach((done) => {
     server.close(done);
   });
 
-  after(removeDatabase);
+  afterEach(removeDatabase);
 
   it('should initially return an empty array', function () {
     return fetch('http://localhost:3000/people')
@@ -51,7 +51,12 @@ describe('app', function() {
   });
 
   it('should enable getting a specific person', function () {
-    return fetch('http://localhost:3000/people/0')
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/people/0')
+      })
       .then(response => {
         expect(response.ok).to.be.ok;
 
