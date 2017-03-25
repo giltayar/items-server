@@ -49,6 +49,18 @@ describe('app', function() {
         expect(json[0].name).to.equal('Hillary Clinton');
       })
   });
+
+  it('should enable getting a specific person', function () {
+    return fetch('http://localhost:3000/people/0')
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json.name).to.deep.equal('Hillary Clinton');
+      })
+  });
 })
 
 function removeDatabase(done) {

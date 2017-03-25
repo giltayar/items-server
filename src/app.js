@@ -23,7 +23,23 @@ app.get('/people', (req, res) => {
     else {
       res.json(JSON.parse(content));
     }
-  }) 
+  })
+});
+
+app.get('/people/:index', (req, res) => {
+  fs.readFile(DB, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        res.json([]);
+      }
+      else {
+        res.status(500).send(err);
+      }
+    }
+    else {
+      res.json(JSON.parse(content)[req.params.index]);
+    }
+  })
 });
 
 app.post('/reset', (req, res) => {
