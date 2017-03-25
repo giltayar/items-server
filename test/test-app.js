@@ -66,6 +66,29 @@ describe('app', function() {
         expect(json.name).to.deep.equal('Hillary Clinton');
       })
   });
+
+  it('should enable updating a specific person', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST'})
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/people/0', { method: 'PUT', body: JSON.stringify({
+          name: 'Billary Flintsones', age: 88
+        }), headers: { 'Content-Type': 'application/json' } })
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/people/0')
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json.name).to.deep.equal('Billary Flintsones');
+      })
+  });
 })
 
 function removeDatabase(done) {

@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -38,6 +39,33 @@ app.get('/people/:index', (req, res) => {
     }
     else {
       res.json(JSON.parse(content)[req.params.index]);
+    }
+  })
+});
+
+app.use('/people/:index', bodyParser.json());
+
+app.put('/people/:index', (req, res) => {
+  fs.readFile(DB, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        res.json([]);
+      }
+      else {
+        res.status(500).send(err);
+      }
+    }
+    else {
+      const people = JSON.parse(content);
+
+      people[req.params.index] = req.body;
+
+      fs.writeFile(DB, JSON.stringify(people), err => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        res.status(200).end()
+      })
     }
   })
 });
