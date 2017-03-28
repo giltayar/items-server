@@ -1,3 +1,5 @@
+//@flow
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -43,7 +45,7 @@ app.get('/people/:index', (req, res) => {
   })
 });
 
-app.use('/people/:index', bodyParser.json());
+app.use('/people', bodyParser.json());
 
 app.put('/people/:index', (req, res) => {
   fs.readFile(DB, (err, content) => {
@@ -59,6 +61,56 @@ app.put('/people/:index', (req, res) => {
       const people = JSON.parse(content);
 
       people[req.params.index] = req.body;
+
+      fs.writeFile(DB, JSON.stringify(people), err => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        res.status(200).end()
+      })
+    }
+  })
+});
+
+app.delete('/people/:index', (req, res) => {
+  fs.readFile(DB, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        res.json([]);
+      }
+      else {
+        res.status(500).send(err);
+      }
+    }
+    else {
+      const people = JSON.parse(content);
+
+      people.splice(parseInt(req.params.index, 10), 1);
+
+      fs.writeFile(DB, JSON.stringify(people), err => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        res.status(200).end()
+      })
+    }
+  })
+});
+
+app.post('/people', (req, res) => {
+  fs.readFile(DB, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        res.json([]);
+      }
+      else {
+        res.status(500).send(err);
+      }
+    }
+    else {
+      const people = JSON.parse(content);
+
+      people.push(req.body);
 
       fs.writeFile(DB, JSON.stringify(people), err => {
         if (err) {

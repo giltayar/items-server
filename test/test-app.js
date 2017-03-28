@@ -1,4 +1,4 @@
-const {describe, it} = require('mocha')
+const {describe, it, beforeEach, afterEach} = require('mocha')
 const {expect} = require('chai')
 const app = require('../src/app');
 const fetch = require('node-fetch');
@@ -89,7 +89,55 @@ describe('app', function() {
         expect(json.name).to.deep.equal('Billary Flintsones');
       })
   });
+
+  it('should enable adding a person', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/people', {
+          method: 'POST', body: JSON.stringify({
+            name: 'Billary Flintsones', age: 88
+          }), headers: { 'Content-Type': 'application/json' }
+        })
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/people')
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json).to.have.length(3);
+        expect(json[2].name).to.deep.equal('Billary Flintsones');
+      })
+  });
+  it('should enable deleting a person', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/people/0', {method: 'DELETE'})
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/people')
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok; 
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json).to.have.length(1);
+        expect(json[0].name).to.deep.equal('Bill Clinton');
+      })
+  });
 })
+
 
 function removeDatabase(done) {
     fs.unlink(os.tmpdir() + '/db.json',
