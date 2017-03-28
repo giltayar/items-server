@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "deploy": "now && echo dont forget to now alias ... create-bootcamp-people-server",
+    "deploy": "now && now alias",
     "start": "node ."
   },
   "repository": {
