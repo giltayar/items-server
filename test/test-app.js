@@ -21,7 +21,7 @@ describe('app', function() {
   afterEach(removeDatabase);
 
   it('should initially return an empty array', function () {
-    return fetch('http://localhost:3000/people')
+    return fetch('http://localhost:3000/items')
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -37,7 +37,7 @@ describe('app', function() {
       .then(response => {
         expect(response.ok).to.be.ok;
 
-        return fetch('http://localhost:3000/people');
+        return fetch('http://localhost:3000/items');
       })
       .then(response => {
         expect(response.ok).to.be.ok;
@@ -50,12 +50,12 @@ describe('app', function() {
       })
   });
 
-  it('should enable getting a specific person', function () {
+  it('should enable getting a specific person by index', function () {
     return fetch('http://localhost:3000/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
-        return fetch('http://localhost:3000/people/0')
+        return fetch('http://localhost:3000/items/0')
       })
       .then(response => {
         expect(response.ok).to.be.ok;
@@ -67,20 +67,65 @@ describe('app', function() {
       })
   });
 
-  it('should enable updating a specific person', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST'})
+  it('should enable getting a specific person by id', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
-        return fetch('http://localhost:3000/people/0', { method: 'PUT', body: JSON.stringify({
-          name: 'Billary Flintsones', age: 88
-        }), headers: { 'Content-Type': 'application/json' } })
+        return fetch('http://localhost:3000/items/hill')
       })
       .then(response => {
         expect(response.ok).to.be.ok;
-        return fetch('http://localhost:3000/people/0')
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json.name).to.deep.equal('Hillary Clinton');
+      })
+  });
+
+  it('should enable updating a specific person by index', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/items/0', {
+          method: 'PUT', body: JSON.stringify({
+            name: 'Billary Flintsones', age: 88
+          }), headers: { 'Content-Type': 'application/json' }
+        })
       })
       .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/items/0')
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json.name).to.deep.equal('Billary Flintsones');
+      })
+  });
+
+  it('should enable updating a specific person by id', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/items/bill', {
+          method: 'PUT', body: JSON.stringify({
+            name: 'Billary Flintsones', age: 88
+          }), headers: { 'Content-Type': 'application/json' }
+        })
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/items/bill')
+      })
+      .then(response => {
+        console.log('status', response.status);
         expect(response.ok).to.be.ok;
 
         return response.json();
@@ -95,7 +140,7 @@ describe('app', function() {
       .then(response => {
         expect(response.ok).to.be.ok;
 
-        return fetch('http://localhost:3000/people', {
+        return fetch('http://localhost:3000/items', {
           method: 'POST', body: JSON.stringify({
             name: 'Billary Flintsones', age: 88
           }), headers: { 'Content-Type': 'application/json' }
@@ -103,7 +148,7 @@ describe('app', function() {
       })
       .then(response => {
         expect(response.ok).to.be.ok;
-        return fetch('http://localhost:3000/people')
+        return fetch('http://localhost:3000/items')
       })
       .then(response => {
         expect(response.ok).to.be.ok;
@@ -115,19 +160,42 @@ describe('app', function() {
         expect(json[2].name).to.deep.equal('Billary Flintsones');
       })
   });
-  it('should enable deleting a person', function () {
+
+  it('should enable deleting a person by index', function () {
     return fetch('http://localhost:3000/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
-        return fetch('http://localhost:3000/people/0', {method: 'DELETE'})
+        return fetch('http://localhost:3000/items/0', {method: 'DELETE'})
       })
       .then(response => {
         expect(response.ok).to.be.ok;
-        return fetch('http://localhost:3000/people')
+        return fetch('http://localhost:3000/items')
       })
       .then(response => {
         expect(response.ok).to.be.ok; 
+
+        return response.json();
+      })
+      .then(json => {
+        expect(json).to.have.length(1);
+        expect(json[0].name).to.deep.equal('Bill Clinton');
+      })
+  });
+
+  it('should enable deleting a person by id', function () {
+    return fetch('http://localhost:3000/reset', { method: 'POST' })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+
+        return fetch('http://localhost:3000/items/hill', { method: 'DELETE' })
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
+        return fetch('http://localhost:3000/items')
+      })
+      .then(response => {
+        expect(response.ok).to.be.ok;
 
         return response.json();
       })

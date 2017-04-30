@@ -13,7 +13,7 @@ const DB = path.join(os.tmpdir(), 'db.json');
 
 app.use(cors({allowedOrigins: ['*']}));
 
-app.get('/people', (req, res) => {
+app.get('/items', (req, res) => {
   fs.readFile(DB, (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
@@ -29,40 +29,47 @@ app.get('/people', (req, res) => {
   })
 });
 
-app.get('/people/:index', (req, res) => {
+app.get('/items/:id', (req, res) => {
   fs.readFile(DB, (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
-        res.json([]);
+        res.json(null);
       }
       else {
         res.status(500).send(err);
       }
     }
     else {
-      res.json(JSON.parse(content)[req.params.index]);
+      const items = JSON.parse(content);
+      const {item} = findById(items, req.params.id)
+      if (!item) {
+        res.sendStatus(404);
+      }
+      else {
+        res.json(item);
+      }
     }
   })
 });
 
-app.use('/people', bodyParser.json());
+app.use('/items', bodyParser.json());
 
-app.put('/people/:index', (req, res) => {
+app.put('/items/:id', (req, res) => {
   fs.readFile(DB, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        res.json([]);
-      }
-      else {
-        res.status(500).send(err);
-      }
+    if (err && err.code !== 'ENOENT') {
+      res.status(500).send(err);
     }
     else {
-      const people = JSON.parse(content);
+      const items = JSON.parse(content || '[]');
+      const {item, index} = findById(items, req.params.id);
 
-      people[req.params.index] = req.body;
+      if (index === undefined) {
+        return res.sendStatus(404);
+      }
 
-      fs.writeFile(DB, JSON.stringify(people), err => {
+      items[index] = Object.assign({id: item.id}, req.body);
+
+      fs.writeFile(DB, JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -72,22 +79,22 @@ app.put('/people/:index', (req, res) => {
   })
 });
 
-app.delete('/people/:index', (req, res) => {
+app.delete('/items/:id', (req, res) => {
   fs.readFile(DB, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        res.json([]);
-      }
-      else {
-        res.status(500).send(err);
-      }
+    if (err && err.code !== 'ENOENT') {
+      res.status(500).send(err);
     }
     else {
-      const people = JSON.parse(content);
+      const items = JSON.parse(content || '[]');
+      const { index } = findById(items, req.params.id);
 
-      people.splice(parseInt(req.params.index, 10), 1);
+      if (index === undefined) {
+        return res.sendStatus(404);
+      }
 
-      fs.writeFile(DB, JSON.stringify(people), err => {
+      items.splice(index, 1);
+
+      fs.writeFile(DB, JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -97,38 +104,35 @@ app.delete('/people/:index', (req, res) => {
   })
 });
 
-app.post('/people', (req, res) => {
+app.post('/items', (req, res) => {
   fs.readFile(DB, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        res.json([]);
-      }
-      else {
-        res.status(500).send(err);
-      }
+    if (err && err.code !== 'ENOENT') {
+      res.status(500).send(err);
     }
     else {
-      const people = JSON.parse(content);
+      const items = JSON.parse(content || '[]');
 
-      people.push(req.body);
+      items.push(req.body);
 
-      fs.writeFile(DB, JSON.stringify(people), err => {
+      fs.writeFile(DB, JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
         res.status(200).end()
       })
     }
-  })
+  });
 });
 
 app.post('/reset', (req, res) => {
   fs.writeFile(DB, JSON.stringify([{
+    id: 'hill',
     name: 'Hillary Clinton',
     age: 69,
     gender: 'female'
   },
   {
+    id: 'bill',
     name: 'Bill Clinton',
     age: 70,
     gender: 'male'
@@ -142,5 +146,17 @@ app.post('/reset', (req, res) => {
   })
 });
 
+const findById = (items, id) => {
+  const index = items.findIndex(item => item.id === id);
+
+  if (index === -1) {
+    const index = parseInt(id, 10);
+    const item = items[index];
+
+    return {item, index: item ? index : undefined};
+  } else {
+    return {item: items[index], index};
+  }
+}
 
 module.exports = app;
