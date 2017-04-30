@@ -1,7 +1,7 @@
 {
-  "name": "people-server",
+  "name": "items-server",
   "version": "1.0.0",
-  "description": "The People server used by the React app used in the tutorials",
+  "description": "The items server used by the React app used in the tutorials",
   "main": "server.js",
   "scripts": {
     "test": "mocha",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CreateBootcamp/people-server.git"
+    "url": "git+https://github.com/CreateBootcamp/items-server.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/CreateBootcamp/people-server/issues"
+    "url": "https://github.com/CreateBootcamp/items-server/issues"
   },
-  "homepage": "https://github.com/CreateBootcamp/people-server#readme",
+  "homepage": "https://github.com/CreateBootcamp/items-server#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
