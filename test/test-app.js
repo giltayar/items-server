@@ -33,7 +33,7 @@ describe('app', function() {
   });
 
   it('should return the clinton family after reset', function () {
-    return fetch('http://localhost:3000/reset', {method: 'POST'})
+    return fetch('http://localhost:3000/items/reset', {method: 'POST'})
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -51,7 +51,7 @@ describe('app', function() {
   });
 
   it('should enable getting a specific person by index', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -68,7 +68,7 @@ describe('app', function() {
   });
 
   it('should enable getting a specific person by id', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -85,7 +85,7 @@ describe('app', function() {
   });
 
   it('should enable updating a specific person by index', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -110,7 +110,7 @@ describe('app', function() {
   });
 
   it('should enable updating a specific person by id', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -136,7 +136,7 @@ describe('app', function() {
   });
 
   it('should enable adding a person', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -162,7 +162,7 @@ describe('app', function() {
   });
 
   it('should enable deleting a person by index', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -184,7 +184,7 @@ describe('app', function() {
   });
 
   it('should enable deleting a person by id', function () {
-    return fetch('http://localhost:3000/reset', { method: 'POST' })
+    return fetch('http://localhost:3000/items/reset', { method: 'POST' })
       .then(response => {
         expect(response.ok).to.be.ok;
 
@@ -208,6 +208,6 @@ describe('app', function() {
 
 
 function removeDatabase(done) {
-    fs.unlink(os.tmpdir() + '/db.json',
+    fs.unlink(os.tmpdir() + '/db-items.json',
       (err) => !err || err.code === 'ENOENT' ? done() : done(err));
 }

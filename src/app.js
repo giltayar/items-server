@@ -9,12 +9,20 @@ const os = require('os');
 
 const app = express();
 
-const DB = path.join(os.tmpdir(), 'db.json');
+const DB = type => {
+  // Since this type comes from the URL, it may come from hackers, and generates a filename, so we need to:
+  // 1. ensure that it has a normal length 
+  // 2. ensure that it has only characters we deem acceptable 
+  //    (lowercase ascii, upercase, digits, dash and underscore)
+  const safeType = Array.from(type.slice(0, 100)).filter(ch => /[a-zA-Z0-9-_]/.test(ch)).join('')
+
+  return path.join(os.tmpdir(), `db-${safeType}.json`);
+}
 
 app.use(cors({allowedOrigins: ['*']}));
 
-app.get('/items', (req, res) => {
-  fs.readFile(DB, (err, content) => {
+app.get('/:type', (req, res) => {
+  fs.readFile(DB(req.params.type), (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
         res.json([]);
@@ -29,8 +37,8 @@ app.get('/items', (req, res) => {
   })
 });
 
-app.get('/items/:id', (req, res) => {
-  fs.readFile(DB, (err, content) => {
+app.get('/:type/:id', (req, res) => {
+  fs.readFile(DB(req.params.type), (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
         res.json(null);
@@ -52,10 +60,10 @@ app.get('/items/:id', (req, res) => {
   })
 });
 
-app.use('/items', bodyParser.json());
+app.use('/:type', bodyParser.json());
 
-app.put('/items/:id', (req, res) => {
-  fs.readFile(DB, (err, content) => {
+app.put('/:type/:id', (req, res) => {
+  fs.readFile(DB(req.params.type), (err, content) => {
     if (err && err.code !== 'ENOENT') {
       res.status(500).send(err);
     }
@@ -69,7 +77,7 @@ app.put('/items/:id', (req, res) => {
 
       items[index] = Object.assign({id: item.id}, req.body);
 
-      fs.writeFile(DB, JSON.stringify(items), err => {
+      fs.writeFile(DB(req.params.type), JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -79,8 +87,8 @@ app.put('/items/:id', (req, res) => {
   })
 });
 
-app.delete('/items/:id', (req, res) => {
-  fs.readFile(DB, (err, content) => {
+app.delete('/:type/:id', (req, res) => {
+  fs.readFile(DB(req.params.type), (err, content) => {
     if (err && err.code !== 'ENOENT') {
       res.status(500).send(err);
     }
@@ -94,7 +102,7 @@ app.delete('/items/:id', (req, res) => {
 
       items.splice(index, 1);
 
-      fs.writeFile(DB, JSON.stringify(items), err => {
+      fs.writeFile(DB(req.params.type), JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -104,8 +112,8 @@ app.delete('/items/:id', (req, res) => {
   })
 });
 
-app.post('/items', (req, res) => {
-  fs.readFile(DB, (err, content) => {
+app.post('/:type', (req, res) => {
+  fs.readFile(DB(req.params.type), (err, content) => {
     if (err && err.code !== 'ENOENT') {
       res.status(500).send(err);
     }
@@ -114,7 +122,7 @@ app.post('/items', (req, res) => {
 
       items.push(req.body);
 
-      fs.writeFile(DB, JSON.stringify(items), err => {
+      fs.writeFile(DB(req.params.type), JSON.stringify(items), err => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -124,8 +132,8 @@ app.post('/items', (req, res) => {
   });
 });
 
-app.post('/reset', (req, res) => {
-  fs.writeFile(DB, JSON.stringify([{
+app.post('/:type/reset', (req, res) => {
+  fs.writeFile(DB(req.params.type), JSON.stringify([{
     id: 'hill',
     name: 'Hillary Clinton',
     age: 69,
